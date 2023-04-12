@@ -1,16 +1,31 @@
 #!/usr/bin/env python3
+#
+# Copyright (C) 2023 Alessio Orsini <alessiorsini.ao@proton.me>
+# SPDX-License-Identifier: GPL-3.0-or-later
+# 
+# A copy of the GNU General Public License is available in the 
+# LICENSE file, in the project root directory.
 
 import matplotlib.pyplot as plt
 import numpy
 from scipy import signal, integrate
 
-w = 1
+w = numpy.pi / 4
 T_wdt = (2 * numpy.pi) / w
 T = (0, T_wdt)
+duty = 0.8
+th = (T_wdt * duty) / 2
+
 resolution = 100
 N = list(range(-resolution // 2, resolution // 2 + 1))
 
-func = signal.sawtooth
+def func(t):
+    t_adj = t + th
+    is_duty = t_adj - T_wdt * (t_adj // T_wdt) <= T_wdt * duty
+
+    return 1 if is_duty else 0
+
+print(f"{w=}, {T_wdt=}, {duty=}, {th=}")
 
 print(f"calculating real function...")
 x = numpy.arange(-T_wdt * 2, T_wdt * 2, 0.1)
